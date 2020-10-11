@@ -25,41 +25,49 @@
 		<br>
 	<?php
 		$name = $_POST['name'];
-		$name = strtolower($name);
-		$name[0] = strtoupper($name[0]);
 		$email = $_POST['email'];
-		$allNames = $_POST['names'];
-		$array = explode(" ", $allNames);
-		// "Nombre correo@gmail.com nombre2 correo2@gmail.com"
-		// $array[0] = Nombre $array[1] = correo@gmail.com
 
-		// $agenda[$array[0](Nombre) ] = $array[1](correo@gmail.com)
-		// $agenda['Nombre'] => correo@gmail.com
-		// Nombre => correo@gmail.com
-		for ($i=0; $i < count($array); $i+=2) {
-			if ($i+1 > count($array)) {
-				print_r($agenda);
-			}else{
+		//Getting the name and making it into a correct format
+		function formatName($name){
+			$name = strtolower($name);
+			$name = str_replace(" ", "_", $name);
+			$name[0] = strtoupper($name[0]);
+			return $name;
+		}
+
+		// Getting the email and making it into a correct format
+		function formatEmail($email){
+			$email = str_replace(" ", "", $email);
+			return $email;
+		}
+
+		$name = formatName($name);
+		$email = formatEmail($email);
+		// Getting all the names entered already
+		$allNames = $_POST['names'];
+		// Making an array with all the values
+		$array = explode(" ", $allNames);
+
+		// This loop makes the associative array with the names as the key and email as the value
+		for ($i=0; $i < count($array); $i+=2) {	
 			$agenda[$array[$i]] = $array[$i+1];
-			}
 		}
 		
+		// Checks if both variables have values
 		if(!empty($name) && !empty($email)){
 			$agenda[$name] = $email;
-		}
-
-		if(empty($name) || $name == ""){
+		}elseif (empty($name) || $name == ""){
 			echo "<p><b style='color:red'>Error!</b>No name detected</p>";
 		}
-		if(empty($email) || $email == ""){
-			echo "<p><b style='color:red'>Error!</b>No email detected</p>";
-		}
 
+		// Shows all the contacts
 		foreach ($agenda as $key => $value) {
 			echo "$key: $value <br>";
 			$allNames = $allNames."$key $value ";
 		}
+		// Hidden input has all the names
 		echo "<input type='hidden' name='names' value='$allNames'>";
+		
 	?>
 	</form>
 </body>
